@@ -1,0 +1,31 @@
+{
+  "name": "graphql-ast-tools",
+  "version": "0.1.0",
+  "description": "Rule-based translation of GraphQL Document AST",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imkleats/graphql-ast-tools.git"
+  },
+  "keywords": [
+    "GraphQL",
+    "AST"
+  ],
+  "author": "Ian Kleats",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/imkleats/graphql-ast-tools/issues"
+  },
+  "homepage": "https://github.com/imkleats/graphql-ast-tools#readme",
+  "devDependencies": {
+    "graphql": "^14.5.8",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  }
+}
