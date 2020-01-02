@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo, visitInParallel, visitWithTypeInfo, TypeInfo, visit, ASTVisitor } from 'graphql';
 import { TranslationContext } from './TranslationContext';
-import { AstMap, AstNode } from './ast';
+import { AstMap, AstNode, ExpectedNode } from './ast';
 
 export type TranslationRule = (ctx: TranslationContext) => ASTVisitor;
-export type AstCoalescer = (astMap: AstMap) => AstNode;
+export type AstCoalescer = (astMap: AstMap) => ExpectedNode<AstNode>;
 
 export function translate(
   params: { [argName: string]: any },
@@ -35,12 +35,21 @@ export function translate(
     }
   }
   const translatedAst = coalescer(queryMap);
-  return translatedAst;
+  return translatedAst as AstNode;
 }
 
 const coalesce: AstCoalescer = astMap => {
-  // Specify a 'root' node in the AstMap that can be used to recursively
-  // populate all ExpectedNodes.
-  // TODO: implement populate method for root ast node
-  return astMap['root'];
+  // In an applicable TranslationRule, the user must
+  // specify a 'root' node in the AstMap that recursively
+  // populates all ExpectedNodes when resolved. Doing so as
+  // a rule applied to OperationDefinition makes some sense.
+  let coalescedQuery: AstNode;
+
+  try {
+    coalescedQuery = astMap['root'].resolve(astMap);
+  } catch (e) {
+    throw new Error(e);
+  }
+
+  return coalescedQuery;
 };

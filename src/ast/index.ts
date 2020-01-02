@@ -1,9 +1,13 @@
 export interface AstNode {
   type: string;
+  resolve: (this: AstNode, m: AstMap) => AstNode;
 }
 
-export type AstNodeResolver<T extends AstNode> = (...args: any[]) => T;
+export interface AstNodeResolver<T extends AstNode> {
+  resolve: (m: AstMap) => T;
+}
 export type ExpectedNode<T> = T extends AstNode ? T | AstNodeResolver<T> : never;
+export type AstNodeResolverFn<T> = (this: T, m: AstMap) => AstNode;
 
 export interface AstMap {
   [loc: string]: AstNode;
