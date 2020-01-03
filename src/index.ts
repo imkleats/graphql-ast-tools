@@ -48,7 +48,7 @@ const coalesce: AstCoalescer = astMap => {
   try {
     coalescedQuery = astMap['root'].resolve(astMap);
   } catch (e) {
-    throw new Error(e);
+    throw e;
   }
 
   return coalescedQuery;
