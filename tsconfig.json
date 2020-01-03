@@ -5,6 +5,10 @@
         "declaration": true,
         "outDir": "./lib",
         "strict": true,
+        "lib": [
+            "esnext.asynciterable",
+            "ES2015"
+        ],
     },
     "include": ["src"],
     "exclude": ["node_modules","**/test/*"]
