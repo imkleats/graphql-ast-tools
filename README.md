@@ -7,9 +7,18 @@ To understand the core processes of `graphql-ast-tools`, it can be helpful to ha
 
 What if... instead of using `ValidationRule`(s) to return an array of error values, we use `TranslationRules` to return a map of generic AST nodes for any query language chosen by the user?
 
-When traversing with `visit()`, each stop of a visitor function might not have _all_ the information it needs to complete a node, but it certainly already knows from the traversal context the _location_ where that information _will be_. This allows the use of an `AstMap` construct that lets any node to populate its elements based on the promise of another AST node existing after complete traversal. This significantly abstracts away the recursive processes invoked in many other query planners (which can frankly involve a good deal of manual book-keeping) and results in a paradigm that is almost entirely separable. In fact, a developer could even implement a multimodal AST to bridge multiple, nested dialects before the GraphQL query ever hits the resolvers (and further optimize with Dataloader). This multimodal AST generation also can be used to address the seamless integration of existing dialect-specific query planners in an enviroment that requires Apollo Federation specification compliance.
+When traversing with `visit()`, each stop of a visitor function might not have _all_ the information it needs to complete a node, but it certainly already knows from the traversal context the _location_ where that information _will be_. This allows the use of an `AstMap` construct that lets any node to populate its elements based on the promise of another AST node existing after complete traversal. This significantly abstracts away the recursive processes invoked in many other query planners (which can frankly involve a good deal of manual book-keeping) and results in a paradigm that is almost entirely separable.
 
-The output is itself an AST defined through the rule set supplied upon invocation. The implementation of the building of query strings from the resulting AST is a detail left to the user and is currently outside the scope of this project.
+In fact, a developer could even implement a multimodal AST to bridge multiple, nested dialects before the GraphQL query ever hits the resolvers (and further optimize with Dataloader). This multimodal AST generation also can be used to address the seamless integration of existing dialect-specific query planners in an enviroment that requires Apollo Federation specification compliance.
+
+The output is itself an AST defined through the rule set supplied upon invocation. The building of query strings from the resulting AST is an implementation detail left to the user and is currently outside the scope of this project.
+
+### Why?
+
+- Working with pure ASTs provides a type-safe way to modify/extend GraphQL query behavior at runtime.
+- Flexibility to meet federation specifications while minimizing network/database calls.
+- Reduces the need for implementing middleware solutions for GraphQL resolvers.
+- Can fully replace most logic that is currently in resolver functions and directive behavior.
 
 ### HelloWorld AST
 
