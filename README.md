@@ -20,6 +20,72 @@ The output is itself an AST defined through the rule set supplied upon invocatio
 - Reduces the need for implementing middleware solutions for GraphQL resolvers.
 - Can fully replace most logic that is currently in resolver functions and directive behavior.
 
-### HelloWorld AST
+## HelloWorld AST
 
-Placeholder for HelloAST demonstration.
+### Step 1: Define your AST
+```ts
+import { AstNode } from './src/ast';
+
+interface HelloAST extends AstNode {
+    name: string
+}
+```
+
+### Step 2: Define your TranslationRule
+```ts
+
+const HelloNode: HelloAst = {
+    type: 'Hello',
+    name: 'world',
+    resolve: (m) => m['root']
+};
+
+const HelloRule = (ctx: TranslationContext) => {
+    return {
+        OperationDefinition(node, key, parent, path, ancestors){
+            ctx.postAstNode({loc: 'root', node: testnode});
+        }
+    }
+}
+```
+
+### Step 3: Set up GraphQL to call `translate` from your resolver
+```ts
+let typeDefs = `type Query {
+    hello: String
+}`;
+
+let resolvers = {
+    Query: {
+        hello: (
+        object: any,
+        args: { [argName: string]: any },
+        ctx: any,
+        resolveInfo: GraphQLResolveInfo
+        ) => {
+            try {
+                let node = translate(args, ctx, resolveInfo, [HelloRule]) as HelloAST;
+                console.log(node)
+                return `${node.type}, ${node.name}!`;
+            } catch (error) {
+                return 'Oops!'
+            }
+        }
+}};
+
+let testSchema = makeExecutableSchema({
+    typeDefs,
+    resolvers
+});
+```
+
+### Step 4: Run your query
+```ts
+graphql(testSchema, '{ hello }', root).then( (response) => {
+    console.log(response);
+});
+
+// Console:
+// { type: 'Hello', name: 'world', resolve: [Function: resolve] } -- The AST Node
+// { data: { hello: 'Hello, world!' } } -- The GraphQL Response
+```
