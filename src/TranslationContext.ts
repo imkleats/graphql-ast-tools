@@ -14,17 +14,19 @@ import Maybe from 'graphql/tsutils/Maybe';
 import { AstNode } from './ast';
 
 // Modeling after graphql-js ValidationContext
-// Still a WIP
+// Still a WIP to determine what might be helpful to
+// access routinely in TranslationRules.
 
 export class TranslationContext {
-  private _ast: ASTNode;
-  private _storeAstNode: (astNodes: { loc: string; node: AstNode }) => void;
-  private _schema: GraphQLSchema;
-  private _typeInfo: TypeInfo;
-  private _reqCtx: any;
+  protected _ast: ASTNode;
+  protected _storeAstNode: (astNodes: { loc: string; node: AstNode }) => void;
+  protected _schema: GraphQLSchema;
+  protected _typeInfo: TypeInfo;
+  protected _reqCtx: any;
+  protected _params: { [argName: string]: any };
 
   constructor(
-    params: { [argName: string]: any },
+    params: { [argName: string]: any }, // is this needed? or is it already in resolveInfo?
     reqCtx: any,
     resolveInfo: GraphQLResolveInfo,
     typeInfo: TypeInfo,
@@ -35,6 +37,7 @@ export class TranslationContext {
     this._schema = resolveInfo.schema;
     this._typeInfo = typeInfo;
     this._storeAstNode = storeAstNode;
+    this._params = params;
   }
 
   // accessor and utility methods?

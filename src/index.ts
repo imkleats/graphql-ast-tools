@@ -11,7 +11,7 @@ export function translate(
   resolveInfo: GraphQLResolveInfo,
   rules: TranslationRule[], // default to specifiedRules? what to include?
   coalescer: AstCoalescer = coalesce,
-  merge: (oldNode: AstNode, newNode: AstNode) => AstNode,
+  // merge: (oldNode: AstNode, newNode: AstNode) => AstNode,
 ): AstNode {
   const abortObj = Object.freeze({});
   const queryMap: AstMap = {};
@@ -19,7 +19,7 @@ export function translate(
   const documentAST = resolveInfo.operation;
   const context = new TranslationContext(params, ctx, resolveInfo, typeInfo, astMap => {
     //TODO: Implement conflict/merge resolution
-    queryMap[astMap.loc] = merge(queryMap[astMap.loc], astMap.node);
+    queryMap[astMap.loc] = astMap.node; // merge(queryMap[astMap.loc], astMap.node);
   });
 
   // This uses a specialized visitor which runs multiple visitors in parallel,

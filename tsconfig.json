@@ -7,7 +7,8 @@
         "strict": true,
         "lib": [
             "esnext.asynciterable",
-            "ES2015"
+            "ES2015",
+            "DOM"
         ],
     },
     "include": ["src"],
