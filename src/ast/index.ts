@@ -4,6 +4,7 @@ export interface AstNode {
 }
 
 export interface AstNodeResolver<T extends AstNode> {
+  type: string;
   resolve: (m: AstMap) => T;
 }
 export type ExpectedNode<T> = T extends AstNode ? T | AstNodeResolver<T> : never;

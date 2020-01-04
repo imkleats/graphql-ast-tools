@@ -38,7 +38,7 @@ export function translate(
   return translatedAst as AstNode;
 }
 
-const coalesce: AstCoalescer = astMap => {
+export const coalesce: AstCoalescer = astMap => {
   // In an applicable TranslationRule, the user must
   // specify a 'root' node in the AstMap that recursively
   // populates all ExpectedNodes when resolved. Doing so as
