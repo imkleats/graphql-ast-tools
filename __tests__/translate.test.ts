@@ -1,7 +1,7 @@
 import { translate, TranslationRule } from '../src';
 import { graphql, GraphQLResolveInfo } from 'graphql';
 import { TranslationContext } from '../src/TranslationContext';
-import { AstNode } from '../src/ast';
+import { AstNode, AstCoalescer, AstMap } from '../src/ast';
 import { makeExecutableSchema } from 'graphql-tools';
 
 describe('translate function', () => {
@@ -11,9 +11,11 @@ describe('translate function', () => {
     });
 
     test('should return Hello World node', () => {
-        let testnode: AstNode = {
-            type: 'Hello world',
-            resolve: (m) => m['root']
+        let testnode: AstCoalescer = (m: AstMap) => {
+            return {
+                type: 'Hello world',
+                resolve: (m: AstMap) => m['root']
+            }
         }
         let helloworldRule: TranslationRule = (ctx: TranslationContext) => {
             return {
@@ -41,21 +43,9 @@ describe('translate function', () => {
             typeDefs: testSDL,
             resolvers
         });
-        let root = {
-            hello: (object: any, params: { [argName: string]: any }, ctx: any, resolveInfo: GraphQLResolveInfo) => {
-                try {
-                    let node = translate(params, ctx, resolveInfo, [helloworldRule] );
-                    expect(node).toBe(testnode);
-                    console.log(node);
-                } catch (error) {
-                    console.log(error);
-                }
-                return 'Hello world!';
-            }
-        }
-        graphql(testSchema, '{ hello }', root).then( (response) => {
+        graphql(testSchema, '{ hello }', null, {}).then( (response) => {
             expect(response).toBeDefined();
-            console.log(response);
+            console.log(JSON.stringify(response));
         });
     });
 });

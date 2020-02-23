@@ -22,28 +22,17 @@ The output is itself an AST defined through the rule set supplied upon invocatio
 
 ## HelloWorld AST
 
-### Step 1: Define your AST
+### Step 1: Define your TranslationRule
 ```ts
-import { AstNode } from './src/ast';
-
-interface HelloAST extends AstNode {
-    name: string
-}
-```
-
-### Step 2: Define your TranslationRule
-```ts
-
-const HelloNode: HelloAst = {
-    type: 'Hello',
-    name: 'world',
-    resolve: (m) => m['root']
-};
-
 const HelloRule = (ctx: TranslationContext) => {
     return {
         OperationDefinition(node, key, parent, path, ancestors){
-            ctx.postAstNode({loc: 'root', node: testnode});
+            ctx.postAstNode({loc: 'root', node: (m: AstMap) => {
+                return {
+                    type: 'Hello',
+                    name: 'world',
+                }
+            }});
         }
     }
 }
@@ -51,11 +40,11 @@ const HelloRule = (ctx: TranslationContext) => {
 
 ### Step 3: Set up GraphQL to call `translate` from your resolver
 ```ts
-let typeDefs = `type Query {
+const typeDefs = `type Query {
     hello: String
 }`;
 
-let resolvers = {
+const resolvers = {
     Query: {
         hello: (
         object: any,
@@ -64,7 +53,7 @@ let resolvers = {
         resolveInfo: GraphQLResolveInfo
         ) => {
             try {
-                let node = translate(args, ctx, resolveInfo, [HelloRule]) as HelloAST;
+                let node = translate(args, ctx, resolveInfo, [HelloRule]);
                 console.log(node)
                 return `${node.type}, ${node.name}!`;
             } catch (error) {
@@ -73,7 +62,7 @@ let resolvers = {
         }
 }};
 
-let testSchema = makeExecutableSchema({
+const testSchema = makeExecutableSchema({
     typeDefs,
     resolvers
 });
@@ -86,6 +75,6 @@ graphql(testSchema, '{ hello }', root).then( (response) => {
 });
 
 // Console:
-// { type: 'Hello', name: 'world', resolve: [Function: resolve] } -- The AST Node
+// { type: 'Hello', name: 'world' } -- The AST Node
 // { data: { hello: 'Hello, world!' } } -- The GraphQL Response
 ```

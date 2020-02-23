@@ -1,9 +1,8 @@
 import { GraphQLResolveInfo, visitInParallel, visitWithTypeInfo, TypeInfo, visit, ASTVisitor } from 'graphql';
 import { TranslationContext } from './TranslationContext';
-import { AstMap, AstNode, ExpectedNode } from './ast';
+import { AstMap, AstNode, AstCoalescer } from './ast';
 
 export type TranslationRule = (ctx: TranslationContext) => ASTVisitor;
-export type AstCoalescer = (astMap: AstMap) => ExpectedNode<AstNode>;
 
 export function translate(
   params: { [argName: string]: any },
@@ -46,7 +45,7 @@ export const coalesce: AstCoalescer = astMap => {
   let coalescedQuery: AstNode;
 
   try {
-    coalescedQuery = astMap['root'].resolve(astMap);
+    coalescedQuery = astMap['root'](astMap);
   } catch (e) {
     throw e;
   }

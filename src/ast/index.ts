@@ -11,5 +11,7 @@ export type ExpectedNode<T> = T extends AstNode ? T | AstNodeResolver<T> : never
 export type AstNodeResolverFn<T> = (this: T, m: AstMap) => AstNode;
 
 export interface AstMap {
-  [loc: string]: AstNode;
+  [loc: string]: AstCoalescer;
 }
+
+export type AstCoalescer = (astMap: AstMap) => any;

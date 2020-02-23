@@ -1,4 +1,4 @@
-import { AstNode, AstMap } from "../src/ast";
+import { AstNode, AstMap, AstCoalescer } from "../src/ast";
 import { coalesce } from "../src";
 
 describe('ast nodes', () => {
@@ -34,10 +34,9 @@ describe('ast nodes', () => {
 
 describe('default coalesce behavior', () => {
     test('it should throw error when AstMap argument does not contain root', () => {
-        let node: AstNode = {
-            type: 'test',
-            resolve(m: AstMap) { 
-                return this;
+        let node: AstCoalescer = (astmap: AstMap) => {
+            return {
+                type: 'test',
             }
         };
         let astmap: AstMap = {};
@@ -47,15 +46,14 @@ describe('default coalesce behavior', () => {
         }).toThrowError();
     });
     test('It should resolve the AstNode at AstMap root', () => {
-        let node: AstNode = {
-            type: 'test',
-            resolve(m: AstMap) { 
-                return {
-                    type: 'testreturn',
-                    resolve(m: AstMap) {
-                        return this;
-                    }                    
-                };
+        let node: AstCoalescer = (astMap: AstMap) => {
+            return {
+                type: 'test',
+                resolve(m: AstMap) { 
+                    return {
+                        type: 'testreturn',     
+                    };
+                }
             }
         };
         let astmap: AstMap = {};
@@ -64,10 +62,10 @@ describe('default coalesce behavior', () => {
         let newnode: AstNode = actualnode.resolve(astmap);
         expect(actualnode).not.toBeNull();
         expect(actualnode).toBeDefined();
-        expect(actualnode.type).toBe('testreturn');
+        expect(actualnode.type).toBe('test');
         expect(newnode).not.toBeNull();
         expect(newnode).toBeDefined();
         expect(newnode.type).toBe('testreturn');
-        expect(newnode).toBe(actualnode);
+        expect(newnode).not.toBe(actualnode);
     });
 })

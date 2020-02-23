@@ -11,7 +11,7 @@ import {
   ASTNode,
 } from 'graphql';
 import Maybe from 'graphql/tsutils/Maybe';
-import { AstNode } from './ast';
+import { AstNode, AstCoalescer } from './ast';
 
 // Modeling after graphql-js ValidationContext
 // Still a WIP to determine what might be helpful to
@@ -19,7 +19,7 @@ import { AstNode } from './ast';
 
 export class TranslationContext {
   protected _ast: ASTNode;
-  protected _storeAstNode: (astNodes: { loc: string; node: AstNode }) => void;
+  protected _storeAstNode: (astNodes: { loc: string; node: AstCoalescer }) => void;
   protected _schema: GraphQLSchema;
   protected _typeInfo: TypeInfo;
   protected _reqCtx: any;
@@ -30,7 +30,7 @@ export class TranslationContext {
     reqCtx: any,
     resolveInfo: GraphQLResolveInfo,
     typeInfo: TypeInfo,
-    storeAstNode: (astNode: { loc: string; node: AstNode }) => void,
+    storeAstNode: (astNode: { loc: string; node: AstCoalescer }) => void,
   ) {
     this._ast = resolveInfo.operation;
     this._reqCtx = reqCtx;
@@ -41,7 +41,7 @@ export class TranslationContext {
   }
 
   // accessor and utility methods?
-  postAstNode(astNode: { loc: string; node: AstNode }): void {
+  postAstNode(astNode: { loc: string; node: AstCoalescer }): void {
     this._storeAstNode(astNode);
   }
 
